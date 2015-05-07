@@ -1,0 +1,12 @@
+<div id="user_detail">
+    <p>Email: <span id="user_email">[% user.email %]</p>
+    <p>Coin Num: <span id="user_coin_num">[% user.coin_num %]</p>
+</div>
+
+<script type="text/javascript">
+setInterval(function(){
+    var coin_num = $("#user_coin_num").html();
+    coin_num = parseInt(coin_num) + 1;
+    $("#user_coin_num").html(coin_num);
+}, 1000);
+</script>

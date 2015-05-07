@@ -1,0 +1,55 @@
+<div>
+    <div class="row" id="gacha_list">
+        [% FOR gacha IN gacha_list %]
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="text-center">[% gacha.gacha_name %]</h4>
+                </div>
+                <ul class="list-group list-group-flush text-center">
+                    <li class="list-group-item">[% gacha.gacha_description %]
+                    </li>
+                </ul>
+                <div class="panel-footer">
+                    <a class="btn btn-lg btn-block btn-info" onClick="return draw_gacha([% gacha.gacha_id %]);">Draw</a>
+                </div>
+            </div>
+        </div>
+        [% END %]
+    </div>
+</div>
+
+<script type="text/javascript">
+    function draw_gacha (gacha_id) {
+        $(document).ready(function(){
+            $.ajax({
+                url: "/draw_gacha",
+                data: {gacha_id : gacha_id},
+                success: function(result){
+                    if (result.user) {
+                        $("#user_coin_num").html(result.user.coin_num);
+                    };
+                    if (result.character) {
+                        $("#gacha_result_container").css("display", "block");
+                        var html_string = "<h3>You got: " + result.character.name + "   (";
+                        for (var i = 0; i < result.character.rarity; i++) {
+                            html_string += "&#9733;";
+                        }
+                        html_string += ")";
+                        $("#gacha_result").html(html_string);
+                    };
+
+                    if (result && result.error && result.error_message) {
+                        $("#message_container").css("display", "block");
+                        $("#error_message").html(result.error_message);
+                    }
+                    else {
+                        $("#message_container").css("display", "none");
+                    }
+                }
+            });
+        });
+
+    };
+
+ </script>

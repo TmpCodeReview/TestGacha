@@ -1,0 +1,137 @@
+<html>
+[% INCLUDE "include/header.tx" %]
+<body>
+<h1> Welcome to Gacha Game</h1>
+<div id="user_detail_container" style="[% IF !is_login %]display:none;[% END %]">
+    [% INCLUDE "user_detail.html" %]
+</div>
+<div id="message_container" style="display:none; width: 400px;">
+    [% INCLUDE "message.html" %]
+</div>
+<div id="login_container" style="[% IF is_login %]display: none;[% END %]">
+    [% INCLUDE "login.html" %]
+</div>
+<div id="gacha_container" style="[% IF !is_login %]display: none;[% END %]">
+    [% INCLUDE "gacha_detail.html" %]
+</div>
+<div id="gacha_result_container" style="display: none;">
+    [% INCLUDE "gacha_result.html" %]
+</div>
+<div id="inventory_container" style="display: none;">
+    [% INCLUDE "inventory.html" %]
+</div>
+<div id="navigation" style="[% IF !is_login %]display: none;[% END %]">
+    <div class="form-group">
+       <span class="pull-left"><a href="#" id="go_inventory_link">Go Inventory</a></span>
+       <span class="pull-left"><a href="#" id="go_back_link" style="display: none">Back</a></span><br /><br />
+       <span class="pull-left"><a href="#" id="logout_link">Logout</a></span><br />
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#go_inventory_link").click(function(){
+            $("#gacha_container").css("display", "none");
+            $("#gacha_result_container").css("display", "none");
+            $("#go_inventory_link").css("display", "none");
+            $("#go_back_link").css("display", "block");
+            $("#inventory_container").css("display", "block");
+            $.ajax({
+                url: "/inventory",
+                success: function(result){
+                    if (result && !result.error) {
+                        $("#message_container").css("display", "none");
+                        function createFirstGridData() {
+                            var data = [];
+                            var user_character;
+                            for (var i = 0; i < result.user_characters.length; i++) {
+                                user_character = result.user_characters[i];
+
+                                var rarity_string = "";
+                                for (var j = 0; j < user_character.character_rarity; j++) {
+                                    rarity_string += "&#9733;";
+                                }
+                                data.push({
+                                    no: i + 1,
+                                    character_name: user_character.character_name,
+                                    character_rarity: rarity_string,
+                                    reg_date: timeConverter(user_character.reg_date)
+                                });
+                            }
+                            return data;
+                        }
+                        $("#grid1").html("");
+                        $("#grid1").shieldGrid({
+                            dataSource: {
+                                data: createFirstGridData()
+                            },
+                            paging: {
+                                pageSize: 10
+                            },
+                            selection: {
+                                type: "row",
+                                multiple: false
+                            },
+                            columns: [
+                                { field: "no", title: "No." },
+                                { field: "character_name", title: "Character Name" },
+                                {field: "character_rarity", title: "Rarity"},
+                                { field: "reg_date", title: "Got date" }
+                            ]
+                        });
+                    }
+                    
+                    if (result && result.error && result.error_message) {
+                        $("#message_container").css("display", "block");
+                        $("#error_message").html(result.error_message);
+                    }
+                    else {
+                        $("#message_container").css("display", "none");
+                    }
+                }
+            });
+        });
+
+        $("#logout_link").click(function(){
+            $("#user_detail_container").css("display", "none");
+            $("#gacha_container").css("display", "none");
+            $("#gacha_result_container").css("display", "none");
+            $("#inventory_container").css("display", "none");
+            $("#go_inventory_link").css("display", "none");
+            $("#go_back_link").css("display", "none");
+            $("#logout_link").css("display", "none");
+
+            $.ajax({
+                url: "/logout",
+                success: function(result){
+                    $("#login_container").css("display", "block");
+                }
+            });
+        });
+        
+        $("#go_back_link").click(function(){
+            $("#user_detail_container").css("display", "block");
+            $("#gacha_container").css("display", "block");
+            $("#gacha_result_container").css("display", "none");
+            $("#inventory_container").css("display", "none");
+            $("#go_inventory_link").css("display", "block");
+            $("#go_back_link").css("display", "none");
+            $("#logout_link").css("display", "block");
+        });
+
+        function timeConverter(unix_timestamp){
+          var a = new Date(unix_timestamp*1000);
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          var year = a.getFullYear();
+          var month = months[a.getMonth()];
+          var date = a.getDate();
+          var hour = a.getHours();
+          var min = a.getMinutes();
+          var sec = a.getSeconds();
+          var time = month + ', ' + date + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+          return time;
+        }
+    });
+</script>
+</html>

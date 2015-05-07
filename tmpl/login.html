@@ -1,0 +1,161 @@
+<h2> Login or Signup</h2>
+
+<div id="form_login" style="display: block; width: 400px;">
+    <div class="form-group">
+        <input type="text" name="email" id="email" class="form-control input-lg" placeholder="Email">
+    </div>
+    <div class="form-group">
+        <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password">
+    </div>
+    <div class="form-group">
+        <button id="login_btn" class="btn btn-primary btn-lg btn-block">Login In</button>
+        <span class="pull-right"><a href="#" id="signup_link">Sign Up?</a></span>
+    </div>
+</div>
+
+<div id="form_signup" class="form_signup" style="display: none; width: 400px;">
+    <div class="form-group">
+        <input type="text" name="email" id="reg_email" class="form-control input-lg" placeholder="Email">
+    </div>
+    <div class="form-group">
+        <input type="password" name="password" id="reg_password" class="form-control input-lg" placeholder="Password">
+    </div>
+    <div class="form-group">
+        <input type="password" name="password" id="reg_password_confirm" class="form-control input-lg" placeholder="Password again">
+    </div>
+    <div class="form-group">
+        <button id="signup_btn" class="btn btn-primary btn-lg btn-block">Register</button>
+        <span class="pull-right"><a href="#" id="login_link">Login</a></span>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#login_btn").click(function(){
+            var email = $("#email").val();
+            var password = $("#password").val();
+            $.ajax({
+                url: "/login",
+                data: {email: email, password: password },
+                success: function(result){
+                    if (result && !result.error) {
+                        $("#login_container").css("display", "none");
+                        $("#message_container").css("display", "none");
+                        $("#go_back_link").css("display", "none");
+                        $("#go_inventory_link").css("display", "block");
+                        $("#logout_link").css("display", "block");
+                        $("#navigation").css("display", "block");
+
+                        if (result.user) {
+                            $("#user_detail_container").css("display", "block");
+                            $("#user_email").html(result.user.email);
+                            $("#user_last_update").html(result.user.last_update);
+                            $("#user_coin_num").html(result.user.coin_num);
+                        }
+
+                        if (result.gacha_list && result.gacha_list.length > 0) {
+                            $("#gacha_container").css("display", "block");
+                            var html_string = "";
+                            var gacha;
+                            for (var i = 0; i < result.gacha_list.length; i++) {
+                                gacha = result.gacha_list[i]
+
+                                html_string += "<div class='col-md-4'>"
+                                    + "<div class='panel panel-info'>"
+                                    + "<div class='panel-heading'>"
+                                    + "<h4 class='text-center'>" + gacha.gacha_name + "</h4></div>"
+                                    + "<ul class='list-group list-group-flush text-center'>"
+                                    + "<li class='list-group-item'>" + gacha.gacha_description + "</li></ul>"
+                                    + "<div class='panel-footer'>"
+                                    + "<a class='btn btn-lg btn-block btn-info' onClick='return draw_gacha(" + gacha.gacha_id + ");'>Draw</a>"
+                                    + "</div></div></div>";
+                            }
+
+                            $("#gacha_list").html(html_string);
+
+                        }
+                    }
+                    
+                    if (result && result.error && result.error_message) {
+                        $("#message_container").css("display", "block");
+                        $("#error_message").html(result.error_message);
+                    }
+                    else {
+                        $("#message_container").css("display", "none");
+                    }
+                }
+            });
+        });
+
+        $("#signup_btn").click(function(){
+            var email = $("#reg_email").val();
+            var password = $("#reg_password").val();
+            var password_confirm = $("#reg_password_confirm").val();
+            $.ajax({
+                url: "/signup",
+                data: {email: email, password: password, password_confirm: password_confirm },
+                success: function(result){
+                    if (result && !result.error) {
+                        $("#login_container").css("display", "none");
+                        $("#message_container").css("display", "none");                        
+                        $("#go_back_link").css("display", "none");
+                        $("#go_inventory_link").css("display", "block");
+                        $("#logout_link").css("display", "block");
+                        $("#navigation").css("display", "block");
+
+                        if (result.user) {
+                            $("#user_detail_container").css("display", "block");
+                            $("#user_email").html(result.user.email);
+                            $("#user_last_update").html(result.user.last_update);
+                            $("#user_coin_num").html(result.user.coin_num);
+                        }
+
+                        if (result.gacha_list && result.gacha_list.length > 0) {
+                            $("#gacha_container").css("display", "block");
+                            var html_string = "";
+                            var gacha;
+                            for (var i = 0; i < result.gacha_list.length; i++) {
+                                gacha = result.gacha_list[i]
+
+                                html_string += "<div class='col-md-4'>"
+                                    + "<div class='panel panel-info'>"
+                                    + "<div class='panel-heading'>"
+                                    + "<h4 class='text-center'>" + gacha.gacha_name + "</h4></div>"
+                                    + "<ul class='list-group list-group-flush text-center'>"
+                                    + "<li class='list-group-item'>" + gacha.gacha_description + "</li></ul>"
+                                    + "<div class='panel-footer'>"
+                                    + "<a class='btn btn-lg btn-block btn-info' onClick='return draw_gacha(" + gacha.gacha_id + ");'>Draw</a>"
+                                    + "</div></div></div>";
+
+                            }
+
+                            $("#gacha_list").html(html_string);
+
+                        }
+                    }
+
+                    if (result && result.error && result.error_message) {
+                        $("#message_container").css("display", "block");
+                        $("#error_message").html(result.error_message);
+                    }
+                    else {
+                        $("#message_container").css("display", "none");
+                    }
+                }
+            });
+        });
+
+        $("#signup_link").click(function(){
+            $("#form_login").css("display", "none");
+            $("#form_signup").css("display", "block");
+        });
+
+        $("#login_link").click(function(){
+            $("#form_login").css("display", "block");
+            $("#form_signup").css("display", "none");
+        });
+    });
+</script>
+
+</body>
+</html>
