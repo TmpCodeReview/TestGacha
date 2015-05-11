@@ -68,7 +68,8 @@
 15. No test code. Should write test code. Amon2 support unit test: http://amon.64p.org/testing.html
 
 16. Gacha::draw_gacha is too complicated. Shoule separate into smaller ones for better extendable/maintainance and readable.
-17. Some others:
+17. Use some external sites' css/js (like: http://html5shiv.googlecode.com/svn/trunk/html5.js, http://www.shieldui.com/shared/components/latest/css/shieldui-all.min.css). It's not good. Should store in our own server with correct licenses to make sure the files are available and the usage is correct.
+18. Some others:
     + Model::new : $options is not used.
     + Function names should be in consistent format (Gacha::_getTimeStart)
     + Usage of uncommon name (*m = \&get_model;, *s = \&get_service;)
