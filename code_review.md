@@ -5,6 +5,10 @@
 + Code is well structured with MVC model.
 + Functions are tidy and well formatted.
 + Use place holder parameters for SQL, that's s good practic.
++ Setting up to run is quite simple and easy
++ Code indents are using spaces, that's a good one.
++ Almost all constants are stored in Const.pm.
++ Use base classes for Model/Service/Controller.
 
 ### Cons parts
 
@@ -53,12 +57,13 @@ our $FREE_GACHA_RESPAWN_TIME = +{
 ).
 + UI does not sync with data system (coins gained counted and displayed only in client side, not sync with server).
 + Should use cached model for master tables.
-+ Dupplicate code somewhere (get_all_data) => should use Teng ORM
-+ Don't see DB transaction handle, especially for the DB manipulate requests (like Gacha::draw_gacha)
++ Code is not DRY: dupplicate code somewhere (set_model, get_service, get_all_data)
++ Should use Teng for ORM instead of manually using SQLs (reference: http://search.cpan.org/~nekokak/Teng-0.12/lib/Teng.pm)
++ Don't see DB transaction handle, especially for the DB manipulate requests (like Gacha::draw_gacha). 
 + Should not use hardcoded (eg: $c->render_json({'error' => '1', 'error_message' => "Please enter user name and password!"});)
 
 + Inconsistent return Gacha::draw_gacha
-+ Should use imutable object (User::decrease_user_coin, User::_update_user_coin_recover)
++ Should use immutable object (User::decrease_user_coin, User::_update_user_coin_recover)
 
 + No test code. Should write test code.
 
