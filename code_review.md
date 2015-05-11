@@ -1,20 +1,20 @@
 ## Coding review in detail
 ### Pros parts
 
-+ Almost all requirements were implemented.
-+ Code is well structured with MVC model.
-+ Functions are tidy and well formatted.
-+ Use place holder parameters for SQL, that's s good practic.
-+ Setting up to run is quite simple and easy
-+ Code indents are using spaces, that's a good one.
-+ Almost all constants are stored in Const.pm.
-+ Use base classes for Model/Service/Controller.
+1. Almost all requirements were implemented.
+2. Code is well structured with MVC model.
+3. Functions are tidy and well formatted.
+4. Use place holder parameters for SQL, that's s good practic.
+5. Setting up to run is quite simple and easy
+6. Code indents are using spaces, that's a good one.
+7. Almost all constants are stored in Const.pm.
+8. Use base classes for Model/Service/Controller.
 
 ### Cons parts
 
-+ Should not use ANY for all APIs
-+ Usage of Client Storage Session, that is not good for security, especially for Web API.
-+ Some tables don't have primary key or indexes on the searching fields.
+1. Should not use ANY for all APIs
+2. Usage of Client Storage Session, that is not good for security, especially for Web API.
+3. Some tables don't have primary key or indexes on the searching fields.
 
 >> No PK, need index
 CREATE TABLE IF NOT EXISTS `user_gacha_log` (
@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS `user_character` (
   `reg_date` INTEGER NOT NULL
 );
 
-+ Some functions in controller still have logic (Game::login or Game::signup), should use thin controllers.
-+ System design is not extendable (some hardcoded should be better design: 
+4. Some functions in controller still have logic (Game::login or Game::signup), should use thin controllers.
+5. System design is not extendable (some hardcoded should be better design: 
 
 >>
 our $GAME_GACHA_IDS = +{
@@ -55,19 +55,17 @@ our $FREE_GACHA_RESPAWN_TIME = +{
 };
 
 ).
-+ UI does not sync with data system (coins gained counted and displayed only in client side, not sync with server).
-+ Should use cached model for master tables.
-+ Code is not DRY: dupplicate code somewhere (set_model, get_service, get_all_data)
-+ Should use Teng for ORM instead of manually using SQLs (reference: http://search.cpan.org/~nekokak/Teng-0.12/lib/Teng.pm)
-+ Don't see DB transaction handle, especially for the DB manipulate requests (like Gacha::draw_gacha). 
-+ Should not use hardcoded (eg: $c->render_json({'error' => '1', 'error_message' => "Please enter user name and password!"});)
+6. UI does not sync with data system (coins gained counted and displayed only in client side, not sync with server).
+7. Should use cached model for master tables.
+8. Code is not DRY: dupplicate code somewhere (set_model, get_service, get_all_data)
+9. Should use Teng for ORM instead of manually using SQLs (reference: http://search.cpan.org/~nekokak/Teng-0.12/lib/Teng.pm)
+10. Don't see DB transaction handle, especially for the DB manipulate requests (like Gacha::draw_gacha). 
+11. Should not use hardcoded (eg: $c->render_json({'error' => '1', 'error_message' => "Please enter user name and password!"});)
+12. Inconsistent return Gacha::draw_gacha
+13. Should use immutable object (User::decrease_user_coin, User::_update_user_coin_recover)
+14. No test code. Should write test code.
 
-+ Inconsistent return Gacha::draw_gacha
-+ Should use immutable object (User::decrease_user_coin, User::_update_user_coin_recover)
-
-+ No test code. Should write test code.
-
-+ Some others
+15. Some others
     + Model::new: $options is not used.
     + Function names should be in consistent format (Gacha::_getTimeStart)
     + Usage of uncommon name (*m = \&get_model;, *s = \&get_service;)
